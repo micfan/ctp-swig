@@ -23,10 +23,11 @@ endif()
 if(WIN32)
     find_library(CTP_MDUSER_LIBRARY NAMES thostmduserapi PATHS ${CTP_LIBRARY_DIRS})
     find_library(CTP_TRADE_LIBRARY NAMES thosttraderapi PATHS ${CTP_LIBRARY_DIRS})
-    find_library(CTP_RISK_LIBRARY NAMES riskuserapi PATHS ${CTP_LIBRARY_DIRS})
-    if(CTP_MDUSER_LIBRARY AND CTP_TRADE_LIBRARY AND CTP_RISK_LIBRARY)
-        set(CTP_LIBRARIES ${CTP_MDUSER_LIBRARY} ${CTP_TRADE_LIBRARY} ${CTP_RISK_LIBRARY})
-        set(CTP_SHAREDLIBFILES ${PROJECT_SOURCE_DIR}/ctp/api/risk/lib/riskuserapi.dll
+    # find_library(CTP_RISK_LIBRARY NAMES riskuserapi PATHS ${CTP_LIBRARY_DIRS})
+    if(CTP_MDUSER_LIBRARY AND CTP_TRADE_LIBRARY)  # AND CTP_RISK_LIBRARY)
+        set(CTP_LIBRARIES ${CTP_MDUSER_LIBRARY} ${CTP_TRADE_LIBRARY}) # ${CTP_RISK_LIBRARY})
+        set(CTP_SHAREDLIBFILES 
+            # ${PROJECT_SOURCE_DIR}/ctp/api/risk/lib/riskuserapi.dll
             ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/lib/thostmduserapi.dll
             ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/lib/thosttraderapi.dll
         )
