@@ -1,1 +1,6 @@
 *.user
+.idea/
+build/
+deploy.bat
+gen.bat
+install/
