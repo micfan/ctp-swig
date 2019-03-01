@@ -2,7 +2,7 @@
 
 
 require 'thread'
-require 'ctp'
+require_relative 'ctp'
 include Ctp
 
 

@@ -91,7 +91,7 @@ if(SWIG_FOUND)
     endif()
 
     if(RUBY_FOUND)
-#        add_subdirectory(ruby)
+        add_subdirectory(ruby)
     endif(RUBY_FOUND)
 
     if(R_FOUND)
