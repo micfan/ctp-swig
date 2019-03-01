@@ -15,8 +15,8 @@ endif()
 set(CTP_SDK_DIR ${PROJECT_SOURCE_DIR}/20180730_ptest)
 
 if(WIN32)
-    set(CTP_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/public)
-    set(CTP_LIBRARY_DIRS ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/lib ${PROJECT_SOURCE_DIR}/ctp/api/risk/lib)
+    set(CTP_INCLUDE_DIRS ${CTP_SDK_DIR}/6.3.13_tradeapi_win_201807301027)
+    set(CTP_LIBRARY_DIRS ${CTP_INCLUDE_DIRS})
 elseif(UNIX)
     set(CTP_INCLUDE_DIRS
         ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64
@@ -31,17 +31,17 @@ include_directories(${CTP_INCLUDE_DIRS})
 link_directories(${CTP_LIBRARY_DIRS})
 
 if(WIN32)
-    find_library(CTP_MDUSER_LIBRARY NAMES thostmduserapi PATHS ${CTP_LIBRARY_DIRS})
-    find_library(CTP_TRADE_LIBRARY NAMES thosttraderapi PATHS ${CTP_LIBRARY_DIRS})
-    # find_library(CTP_RISK_LIBRARY NAMES riskuserapi PATHS ${CTP_LIBRARY_DIRS})
-    if(CTP_MDUSER_LIBRARY AND CTP_TRADE_LIBRARY)  # AND CTP_RISK_LIBRARY)
-        set(CTP_LIBRARIES ${CTP_MDUSER_LIBRARY} ${CTP_TRADE_LIBRARY}) # ${CTP_RISK_LIBRARY})
-        set(CTP_SHAREDLIBFILES 
-            # ${PROJECT_SOURCE_DIR}/ctp/api/risk/lib/riskuserapi.dll
-            ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/lib/thostmduserapi.dll
-            ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/lib/thosttraderapi.dll
+    find_library(CTP_MDUSER_LIBRARY NAMES thostmduserapi_se PATHS ${CTP_LIBRARY_DIRS})
+    find_library(CTP_TRADE_LIBRARY NAMES thosttraderapi_se PATHS ${CTP_LIBRARY_DIRS})
+    find_library(CTP_LINUX_DATA_COLLECT_LIBRARY NAMES WinDataCollect PATHS ${CTP_LIBRARY_DIRS})
+
+    set(CTP_LIBRARIES ${CTP_MDUSER_LIBRARY} ${CTP_TRADE_LIBRARY} ${CTP_LINUX_DATA_COLLECT_LIBRARY})
+    set(CTP_SHAREDLIBFILES
+        ${CTP_SDK_DIR}/6.3.13_tradeapi_win_201807301027/thostmduserapi_se.dll
+        ${CTP_SDK_DIR}/6.3.13_tradeapi_win_201807301027/thosttraderapi_se.dll
+        ${CTP_SDK_DIR}/6.3.13_tradeapi_win_201807301027/WinDataCollect.dll
         )
-    endif()
+    message(NOTICE " [OK] CTP_LIBRARIES: ${CTP_LIBRARIES}")
 elseif(UNIX)
 #    find_library(CTP_MDUSER_LIBRARY NAMES thostmduserapi_se PATHS ${CTP_LIBRARY_DIRS} HINTS "")
 #    find_library(CTP_TRADE_LIBRARY NAMES thosttraderapi_se PATHS ${CTP_LIBRARY_DIRS})
@@ -69,7 +69,7 @@ endif()
 file(COPY ${CTP_SHAREDLIBFILES} DESTINATION "${CMAKE_INSTALL_PREFIX}/local/lib")
 file(COPY ${CTP_SDK_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(SWIG REQUIRED)
+find_package(SWIG)
 if(SWIG_FOUND)
     include(${SWIG_USE_FILE})
 
@@ -89,11 +89,11 @@ if(SWIG_FOUND)
     find_package(Octave)
 
     if(JNI_FOUND)
-        add_subdirectory(java)
+#        add_subdirectory(java)
     endif()
 
     if(RUBY_FOUND)
-        add_subdirectory(ruby)
+#        add_subdirectory(ruby)
     endif(RUBY_FOUND)
 
     if(R_FOUND)
@@ -127,3 +127,4 @@ endif()
 
 #add_subdirectory(code)
 #add_subdirectory(test)
+add_subdirectory(cpp-demo)

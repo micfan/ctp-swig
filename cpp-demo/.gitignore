@@ -1,0 +1,8 @@
+build/
+*.log
+# MarketData stream file
+*.con
+*.exe
+*.pdb
+*.ilk
+*.pdf
