@@ -72,6 +72,8 @@ file(COPY ${CTP_SDK_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 find_package(SWIG REQUIRED)
 if(SWIG_FOUND)
     include(${SWIG_USE_FILE})
+
+    set(ENV{JAVA_HOME} /usr/lib/jvm/default)
     find_package(Java)
     find_package(JNI)
     find_package(Ruby)
@@ -87,7 +89,7 @@ if(SWIG_FOUND)
     find_package(Octave)
 
     if(JNI_FOUND)
-#        add_subdirectory(java)
+        add_subdirectory(java)
     endif()
 
     if(RUBY_FOUND)
