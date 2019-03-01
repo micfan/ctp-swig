@@ -4,3 +4,6 @@ build/
 deploy.bat
 gen.bat
 install/
+*.zip
+*.rar
+*.tar

@@ -62,8 +62,8 @@ class MdSpi(CThostFtdcMdSpi):
         self.api.Release()
         return
 
-front = "tcp://asp-sim2-front1.financial-trading-platform.com:26213"
-broker = "2030"
+front = "tcp://180.168.146.187:10010"
+broker = "9999"
 user = "352240"
 password = "888888"
 

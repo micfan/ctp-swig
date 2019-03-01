@@ -12,13 +12,23 @@ else()
     set(CMAKE_INSTALL_PREFIX $ENV{HOME})
 endif()
 
+set(CTP_SDK_DIR ${PROJECT_SOURCE_DIR}/20180730_ptest)
+
 if(WIN32)
     set(CTP_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/public)
     set(CTP_LIBRARY_DIRS ${PROJECT_SOURCE_DIR}/ctp/api/trade/win/lib ${PROJECT_SOURCE_DIR}/ctp/api/risk/lib)
 elseif(UNIX)
-    set(CTP_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/ctp/api/trade/linux64/public)
-    set(CTP_LIBRARY_DIRS ${PROJECT_SOURCE_DIR}/ctp/api/trade/linux64/lib)
+    set(CTP_INCLUDE_DIRS
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_clientdatacollectdll_linux64)
+    set(CTP_LIBRARY_DIRS
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_clientdatacollectdll_linux64)
+    message(NOTICE "CTP_LIBRARY_DIRS: ${CTP_LIBRARY_DIRS}")
 endif()
+
+include_directories(${CTP_INCLUDE_DIRS})
+link_directories(${CTP_LIBRARY_DIRS})
 
 if(WIN32)
     find_library(CTP_MDUSER_LIBRARY NAMES thostmduserapi PATHS ${CTP_LIBRARY_DIRS})
@@ -33,15 +43,31 @@ if(WIN32)
         )
     endif()
 elseif(UNIX)
-    find_library(CTP_MDUSER_LIBRARY thostmduserapi PATHS ${CTP_LIBRARY_DIRS})
-    find_library(CTP_TRADE_LIBRARY thosttraderapi PATHS ${CTP_LIBRARY_DIRS})
-    if(CTP_MDUSER_LIBRARY AND CTP_TRADE_LIBRARY)
-        set(CTP_LIBRARIES ${CTP_MDUSER_LIBRARY} ${CTP_TRADE_LIBRARY})
-        set(CTP_SHAREDLIBFILES ${CTP_LIBRARIES})
-    endif()
+#    find_library(CTP_MDUSER_LIBRARY NAMES thostmduserapi_se PATHS ${CTP_LIBRARY_DIRS} HINTS "")
+#    find_library(CTP_TRADE_LIBRARY NAMES thosttraderapi_se PATHS ${CTP_LIBRARY_DIRS})
+#    find_library(CTP_LINUX_DATA_COLLECT_LIBRARY NAMES LinuxDataCollect PATHS ${CTP_LIBRARY_DIRS})
+
+    add_library(CTP_MDUSER_LIBRARY SHARED IMPORTED)
+    set_target_properties( CTP_MDUSER_LIBRARY PROPERTIES IMPORTED_LOCATION ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64/thostmduserapi_se.so )
+    message(NOTICE "CTP_MDUSER_LIBRARY: " CTP_MDUSER_LIBRARY)
+
+    add_library(CTP_TRADE_LIBRARY SHARED IMPORTED)
+    set_target_properties( CTP_TRADE_LIBRARY PROPERTIES IMPORTED_LOCATION ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64/thosttraderapi_se.so )
+
+    add_library(CTP_LINUX_DATA_COLLECT_LIBRARY SHARED IMPORTED)
+    set_target_properties( CTP_LINUX_DATA_COLLECT_LIBRARY PROPERTIES IMPORTED_LOCATION ${CTP_SDK_DIR}/v6.3.13_20180730_api_clientdatacollectdll_linux64/LinuxDataCollect.so )
+
+    set(CTP_LIBRARIES CTP_MDUSER_LIBRARY CTP_TRADE_LIBRARY CTP_LINUX_DATA_COLLECT_LIBRARY)
+    set(CTP_SHAREDLIBFILES
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64/thostmduserapi_se.so
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_tradeapi_se_linux64/thosttraderapi_se.so
+        ${CTP_SDK_DIR}/v6.3.13_20180730_api_clientdatacollectdll_linux64/LinuxDataCollect.so
+        )
+    message(NOTICE " [OK] CTP_LIBRARIES: ${CTP_LIBRARIES}")
 endif()
-include_directories(${CTP_INCLUDE_DIRS})
+
 file(COPY ${CTP_SHAREDLIBFILES} DESTINATION "${CMAKE_INSTALL_PREFIX}/local/lib")
+file(COPY ${CTP_SDK_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(SWIG REQUIRED)
 if(SWIG_FOUND)
